@@ -1,10 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>            
-        <meta charset="UTF-8">
-        <title>网页标题</title>
-    </head>
-    <body>
-          蓝威霖生日快乐！！！
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ICY's future</title>
+    <link rel="prefetch" href="./img/index_all.jpg" />
+    <link rel="prerender" href="./img/index_all.jpg" />
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="shortcut icon" href="./icon.png" type="image/x-icon">
+</head>
+
+<body>
+    <div class="show_page">
+        <canvas id="canvas"></canvas>
+        <div class="btn_show">
+            <a href="./home_page.html">宝宝 我爱你</a>
+        </div>
+    </div>
+    <script>
+        var canvas = document.getElementById('canvas');
+        var show_page = document.getElementsByClassName('show_page')[0];
+        var num = window.innerHeight;
+        show_page.style.height = num + 'px';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        var content2d = canvas.getContext('2d');
+        var balls = [];
+        function ball() { //构造函数方法开发
+        this.color = null; //分别为小球的颜色，x y坐标，半径，角度，角度移动x，y坐标
+        this.x = null;
+        this.y = null;
+        this.r = null;
+        this.Angle = null;
+        this.Anglex = null;
+        this.Angley = null;
+        this.init = function (x, y) {
+            // 初始化状态
+            this.x = x;
+            this.y = y;
+            this.r = this.randomNum(10, 30);
+            this.color = this.randomColor();
+            this.Angle = Math.random() * Math.PI * 2;
+            this.Anglex = this.randomNum(10, 12) * Math.cos(this.Angle); //利用三角函数来控制小球的移动方向
+            this.Angley = this.randomNum(10, 12) * Math.sin(this.Angle);
+        };
+        this.randomColor = function () { //随机颜色
+            // return "#" + parseInt(Math.random() * 16777216).toString(16);
+            return  'rgba'+'('+ 255+','+   105+','+  180+','+ .3+')';
+        };
+        this.randomNum = function (max, min) { //随机坐标**/*-*-+**
+            return Math.random() * max + min;
+        };
+        this.move = function () {
+            this.x += this.Anglex * 1.1;
+            this.y += this.Angley * 1.1;
+            this.r -= 0.35;
+            this.Anglex *= 0.92;
+            this.Angley *= 0.92;
+        }
+    }
+
+    function createBall(x, y) {
+        var count = parseInt(Math.random() * 15 + 15);
+        for (var i = 0; i < count; i++) {
+            var b = new ball();
+            b.init(x, y);
+            balls.push(b);
+        }
+    }
+
+    function Draw() {
+
+        for (var i = 0; i < balls.length; i++) {
+            var b = balls[i];
+            b.move();
+            content2d.beginPath();
+            content2d.fillStyle = b.color;
+            content2d.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+            content2d.fill();
+            content2d.closePath();
+            // console.log(1);
+        }
+    }
+
+    function removeBall() {
+        for (var i = 0; i < balls.length; i++) {
+            var b = balls[i];
+            if (b.r < 0.35) {
+                balls.splice(i, 1);
+                i--;
+            }
+        }
+    }
+    loop();
+
+    function loop() {
+        // 清除整个canvas
+        content2d.clearRect(0, 0, canvas.width, canvas.height);
+        Draw();
+        removeBall();
+        // console.log(1);
+        window.requestAnimationFrame(loop);
+    }
+    canvas.onmousemove = function (e) {
+        var x = e.pageX;
+        var y = e.pageY;
+        console.log(x);
+        createBall(x, y);
+    }
+    canvas.ontouchmove = function (e) {
+        // console.log(1);
+        // console.log(e.clientX);
+        var x = e.touches[0].clientX;
+        var y = e.touches[0].clientY;
+        // console.log(x);  
+        createBall(x, y);
+    }
+
+        
+    </script>
+</body>
+
 </html>
